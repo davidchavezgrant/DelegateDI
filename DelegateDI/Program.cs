@@ -1,3 +1,5 @@
+using DelegateDI;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<MySingletonService>();
 builder.Services.AddScoped<MyScopedService>();
@@ -5,63 +7,80 @@ builder.Services.AddTransient<MyTransientService>();
 builder.Services.AddSingleton<MySingletonDelegate>(serviceProvider =>
 												   {
 													   Console.WriteLine("Construct singleton delegate");
-													   return () =>
-														      {
-															      Console.WriteLine("Invoke singleton delegate");
-															      return Task.CompletedTask;
-														      };
+													   return () => Console.WriteLine("Invoke singleton delegate");
 												   });
 builder.Services.AddScoped<MyScopedDelegate>(serviceProvider =>
 											 {
 												 Console.WriteLine("Construct scoped delegate");
-												 return () =>
-													    {
-														    Console.WriteLine("Invoke scoped delegate");
-														    return Task.CompletedTask;
-													    };
+												 return () => Console.WriteLine("Invoke scoped delegate");
 											 });
 builder.Services.AddTransient<MyTransientDelegate>(serviceProvider =>
 												   {
 													   Console.WriteLine("Construct transient delegate");
-													   return () =>
-														      {
-															      Console.WriteLine("Invoke transient delegate");
-															      return Task.CompletedTask;
-														      };
+													   return () => Console.WriteLine("Invoke transient delegate");
 												   });
 var app = builder.Build();
 
-app.MapGet("/singleton-service",  (MySingletonService  service) => "Singleton Service");
-app.MapGet("/singleton-delegate", (MySingletonDelegate service) => "Singleton Delegate");
-app.MapGet("/scoped-service",     (MyScopedService     service) => "Scoped Service");
-app.MapGet("/scoped-delegate",    (MyScopedDelegate    service) => "Scoped Delegate");
-app.MapGet("/transient-service",  (MyTransientService  service) => "Transient Service");
-app.MapGet("/transient-delegate", (MyTransientDelegate service) => "Transient Delegate");
+app.MapGet("/singleton-service",
+		   (MySingletonService service) =>
+		   {
+			   Console.WriteLine("Singleton service endpoint");
+			   service.Log();
+			   return "Singleton Service";
+		   });
+app.MapGet("/singleton-delegate",
+		   (MySingletonDelegate handler) =>
+		   {
+			   Console.WriteLine("Singleton delegate endpoint");
+			   handler();
+			   return "Singleton Delegate";
+		   });
+app.MapGet("/scoped-service",
+		   (MyScopedService service) =>
+		   {
+			   Console.WriteLine("Scoped service endpoint");
+			   service.Log();
+			   return "Scoped Service";
+		   });
+app.MapGet("/scoped-delegate",
+		   (MyScopedDelegate handler) =>
+		   {
+			   Console.WriteLine("Scoped delegate endpoint");
+			   handler();
+			   return "Scoped Delegate";
+		   });
+app.MapGet("/transient-service",
+		   (MyTransientService service) =>
+		   {
+			   Console.WriteLine("Transient service endpoint");
+			   service.Log();
+			   return "Transient Service";
+		   });
+app.MapGet("/transient-delegate",
+		   (MyTransientDelegate handler) =>
+		   {
+			   Console.WriteLine("Transient delegate endpoint");
+			   handler();
+			   return "Transient Delegate";
+		   });
 
 app.Run();
 
-class MySingletonService: IDisposable
+interface IService
 {
-	public MySingletonService() { Console.WriteLine($"Created {nameof(MySingletonService)}"); }
-
-	/// <inheritdoc />
-	public void Dispose() { Console.WriteLine($"Disposed {nameof(MySingletonService)}"); }
+	Guid Id { get; }
+	Task LogAsync();
+	void Log();
 }
 
-class MyTransientService: IDisposable
-{
-	public MyTransientService() { Console.WriteLine($"Created {nameof(MyTransientService)}"); }
-	public void Dispose() { Console.WriteLine($"Disposed {nameof(MyTransientService)}"); }
-}
+delegate void MySingletonDelegate();
 
-class MyScopedService: IDisposable
-{
-	public MyScopedService() { Console.WriteLine($"Created {nameof(MyScopedService)}"); }
-	public void Dispose() { Console.WriteLine($"Disposed {nameof(MyScopedService)}"); }
-}
+delegate void MyScopedDelegate();
 
-delegate Task MySingletonDelegate();
+delegate void MyTransientDelegate();
 
-delegate Task MyScopedDelegate();
+delegate Task MySingletonDelegateAsync();
 
-delegate Task MyTransientDelegate();
+delegate Task MyScopedDelegateAsync();
+
+delegate Task MyTransientDelegateAsync();
