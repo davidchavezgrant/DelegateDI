@@ -33,17 +33,15 @@ builder.Services.AddScoped<MyScopedDelegate>(serviceProvider =>
 builder.Services.AddTransient<MyTransientDelegate>(serviceProvider =>
 												   {
 													   var outerId = Guid.NewGuid();
-													   var outerSingleton   = serviceProvider.GetRequiredService<MySingletonDelegate>();
-													   var outerSingletonId = outerSingleton();
-													   Console.WriteLine($"Located Singleton: {outerSingletonId} while CONSTRUCTING {nameof(MyTransientDelegate)}: {outerId}");
+													   var outerTransient   = serviceProvider.GetRequiredService<MyTransientService>();
+													   var outerTransientId = outerTransient.Id;
+													   Console.WriteLine($"Located {nameof(MyTransientService)}: {outerTransientId} while CONSTRUCTING {nameof(MyTransientDelegate)}: {outerId}");
 													   return () =>
 														      {
-															      var innerSingleton   = serviceProvider.GetRequiredService<MySingletonDelegate>();
-															      var innerSingletonId = innerSingleton();
+															      var innerTransient   = serviceProvider.GetRequiredService<MyTransientService>();
+															      var innerTransientId = innerTransient.Id;
 															      var innerId          = Guid.NewGuid();
-																  Console.WriteLine($"Located Singleton: {innerSingletonId} while INVOKING {nameof(MyTransientDelegate)}: {innerId}");
-																  var outerInvokedFromInner = outerSingleton();
-																  Console.WriteLine("Invoking the outer singleton from the inner transient: " + outerInvokedFromInner);
+																  Console.WriteLine($"Located {nameof(MyTransientService)}: {innerTransientId} while INVOKING {nameof(MyTransientDelegate)}: {innerId}");
 															      return innerId;
 														      };
 												   });
