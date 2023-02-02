@@ -1,6 +1,6 @@
 namespace DelegateDI;
 
-class MyTransientService: IService, IDisposable
+internal class MyTransientService: IService, IDisposable
 {
 	public MyTransientService()
 	{

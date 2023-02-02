@@ -8,60 +8,81 @@ builder.Services.AddScoped<MyScopedService>();
 builder.Services.AddTransient<MyTransientService>();
 builder.Services.AddSingleton<MySingletonDelegate>(serviceProvider =>
 												   {
-													   Console.WriteLine($"Construct {nameof(MySingletonDelegate)}");
-													   return () => Console.WriteLine($"Invoke {nameof(MySingletonDelegate)}");
+													   var outerId = Guid.NewGuid();
+													   Console.WriteLine($"Construct {nameof(MySingletonDelegate)} with outerId: {outerId}");
+													   return () =>
+														      {
+															      var innerId = Guid.NewGuid();
+															      Console.WriteLine($"Invoke {nameof(MySingletonDelegate)} with outerId: {outerId} and innerId: {innerId}");
+														      };
 												   });
 builder.Services.AddScoped<MyScopedDelegate>(serviceProvider =>
 											 {
-												 Console.WriteLine($"Construct {nameof(MyScopedDelegate)}");
-												 return () => Console.WriteLine($"Invoke {nameof(MyScopedDelegate)}");
+												 var outerId = Guid.NewGuid();
+												 Console.WriteLine($"Construct {nameof(MyScopedDelegate)} with outerId: {outerId}");
+												 return () =>
+													    {
+														    var innerId = Guid.NewGuid();
+														    Console.WriteLine($"Invoke {nameof(MyScopedDelegate)} with outerId: {outerId} and innerId: {innerId}");
+													    };
 											 });
 builder.Services.AddTransient<MyTransientDelegate>(serviceProvider =>
 												   {
-													   Console.WriteLine($"Construct {nameof(MyTransientDelegate)}");
-													   return () => Console.WriteLine($"Invoke {nameof(MyTransientDelegate)}");
+													   var outerId = Guid.NewGuid();
+													   Console.WriteLine($"Construct {nameof(MyTransientDelegate)} with outerId: {outerId}");
+													   return () =>
+														      {
+															      var innerId = Guid.NewGuid();
+															      Console.WriteLine($"Invoke {nameof(MyTransientDelegate)} with outerId: {outerId} and innerId: {innerId}");
+														      };
 												   });
 var app = builder.Build();
 
 app.MapGet("/singleton-service",
 		   (MySingletonService service) =>
 		   {
-			   Console.WriteLine($"{nameof(MySingletonService)} endpoint");
+			   var requestId = Guid.NewGuid();
+			   Console.WriteLine($"{nameof(MySingletonService)} endpoint with requestId {requestId}");
 			   service.Log();
-			   return nameof(MySingletonService);
+			   return $"{nameof(MySingletonService)} {service.Id}";
 		   });
 app.MapGet("/singleton-delegate",
 		   (MySingletonDelegate handle) =>
 		   {
-			   Console.WriteLine($"{nameof(MySingletonDelegate)} endpoint");
+			   var requestId = Guid.NewGuid();
+			   Console.WriteLine($"{nameof(MySingletonDelegate)} endpoint with requestId {requestId}");
 			   handle();
 			   return nameof(MySingletonDelegate);
 		   });
 app.MapGet("/scoped-service",
 		   (MyScopedService service) =>
 		   {
-			   Console.WriteLine($"{nameof(MyScopedService)} endpoint");
+			   var requestId = Guid.NewGuid();
+			   Console.WriteLine($"{nameof(MyScopedService)} endpoint with requestId {requestId}");
 			   service.Log();
 			   return nameof(MyScopedService);
 		   });
 app.MapGet("/scoped-delegate",
 		   (MyScopedDelegate handle) =>
 		   {
-			   Console.WriteLine($"{nameof(MyScopedDelegate)} endpoint");
+			   var requestId = Guid.NewGuid();
+			   Console.WriteLine($"{nameof(MyScopedDelegate)} endpoint with requestId {requestId}");
 			   handle();
 			   return nameof(MyScopedDelegate);
 		   });
 app.MapGet("/transient-service",
 		   (MyTransientService service) =>
 		   {
-			   Console.WriteLine($"{nameof(MyTransientService)} endpoint");
+			   var requestId = Guid.NewGuid();
+			   Console.WriteLine($"{nameof(MyTransientService)} endpoint with requestId {requestId}");
 			   service.Log();
 			   return nameof(MyTransientService);
 		   });
 app.MapGet("/transient-delegate",
 		   (MyTransientDelegate handle) =>
 		   {
-			   Console.WriteLine($"{nameof(MyTransientDelegate)} endpoint");
+			   var requestId = Guid.NewGuid();
+			   Console.WriteLine($"{nameof(MyTransientDelegate)} endpoint with requestId {requestId}");
 			   handle();
 			   return nameof(MyTransientDelegate);
 		   });
@@ -69,22 +90,3 @@ app.MapGet("/transient-delegate",
 app.UseSwagger();
 app.UseSwaggerUI();
 app.Run();
-
-interface IService
-{
-	Guid Id { get; }
-	Task LogAsync();
-	void Log();
-}
-
-delegate void MySingletonDelegate();
-
-delegate void MyScopedDelegate();
-
-delegate void MyTransientDelegate();
-
-delegate Task MySingletonDelegateAsync();
-
-delegate Task MyScopedDelegateAsync();
-
-delegate Task MyTransientDelegateAsync();

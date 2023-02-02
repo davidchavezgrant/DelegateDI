@@ -1,6 +1,6 @@
 namespace DelegateDI;
 
-class MyScopedService: IService, IDisposable
+internal class MyScopedService: IService, IDisposable
 {
 	public MyScopedService()
 	{

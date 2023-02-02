@@ -1,6 +1,6 @@
 namespace DelegateDI;
 
-class MySingletonService: IService, IDisposable
+internal class MySingletonService: IService, IDisposable
 {
 	public MySingletonService()
 	{
