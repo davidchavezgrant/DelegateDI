@@ -7,14 +7,14 @@ internal interface IService
 	void Log();
 }
 
-internal delegate void MySingletonDelegate();
+internal delegate Guid MySingletonDelegate();
 
-internal delegate void MyScopedDelegate();
+internal delegate Guid MyScopedDelegate();
 
-internal delegate void MyTransientDelegate();
+internal delegate Guid MyTransientDelegate();
 
-internal delegate Task MySingletonDelegateAsync();
+internal delegate Task<Guid> MySingletonDelegateAsync();
 
-internal delegate Task MyScopedDelegateAsync();
+internal delegate Task<Guid> MyScopedDelegateAsync();
 
-internal delegate Task MyTransientDelegateAsync();
+internal delegate Task<Guid> MyTransientDelegateAsync();
