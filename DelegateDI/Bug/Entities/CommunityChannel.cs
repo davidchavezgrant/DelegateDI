@@ -1,6 +1,3 @@
-using DelegateDI.Bug.Events;
-
-
 namespace DelegateDI.Bug.Entities;
 
 internal class CommunityChannel: Channel

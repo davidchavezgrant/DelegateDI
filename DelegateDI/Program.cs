@@ -1,4 +1,6 @@
 using DelegateDI;
+using DelegateDI.Bug;
+using DelegateDI.Demo;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();

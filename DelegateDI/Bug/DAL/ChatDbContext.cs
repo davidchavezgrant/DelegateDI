@@ -2,20 +2,18 @@ using DelegateDI.Bug.Entities;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.DAL;
 
 internal sealed class ChatDbContext: DbContext
 {
 	public ChatDbContext(DbContextOptions<ChatDbContext> options): base(options) {}
 
 	public DbSet<UserProfile>              Profiles                  => this.Set<UserProfile>();
-	public DbSet<AbstractChannel>          AbstractChannels          => this.Set<AbstractChannel>();
 	public DbSet<Channel>                  Channels                  => this.Set<Channel>();
 	public DbSet<BroadcastChannel>         BroadcastChannels         => this.Set<BroadcastChannel>();
 	public DbSet<ChatRoom>                 ChatRooms                 => this.Set<ChatRoom>();
 	public DbSet<CommunityChannel>         CommunityChannels         => this.Set<CommunityChannel>();
 	public DbSet<UserChannelConfiguration> UserChannelConfigurations => this.Set<UserChannelConfiguration>();
-	public DbSet<ChatMessage>              ChatMessage               => this.Set<ChatMessage>();
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

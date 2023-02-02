@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 
 
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.Entities;
 
 internal class BylinesAccount: IdentityUser
 {

@@ -7,6 +7,7 @@ internal interface IService
 	void Log();
 }
 
+
 internal delegate Guid MySingletonDelegate();
 
 internal delegate Guid MyScopedDelegate();

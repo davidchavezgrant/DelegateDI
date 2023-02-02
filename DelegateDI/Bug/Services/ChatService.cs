@@ -1,10 +1,10 @@
-using DelegateDI.Bug.Dtos;
+using DelegateDI.Bug.DAL;
 using DelegateDI.Bug.Entities;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 
 
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.Services;
 
 internal sealed class ChatService: IChatApiContract
 {

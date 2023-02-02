@@ -1,8 +1,9 @@
+using DelegateDI.Bug.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.DAL;
 
 internal sealed class BylinesIdentityDbContext: IdentityDbContext<BylinesAccount>
 {

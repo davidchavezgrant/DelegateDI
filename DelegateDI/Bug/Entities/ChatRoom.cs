@@ -1,6 +1,3 @@
-using DelegateDI.Bug.Dtos;
-using DelegateDI.Bug.Events;
-
 #pragma warning disable CS8618
 namespace DelegateDI.Bug.Entities;
 

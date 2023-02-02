@@ -2,7 +2,7 @@ using Nethereum.Util;
 using Nethereum.Web3;
 
 
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.Services;
 
 public class EnsLookup
 {

@@ -1,23 +1,16 @@
 using Bogus;
-using DelegateDI.Bug.Dtos;
+using DelegateDI.Bug.DAL;
 using DelegateDI.Bug.Entities;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.Services;
 
 internal sealed class ChannelService: IChannelService
 {
 	public const string DUPLICATE_MEMBER_ERROR      = "room cannot have duplicate members";
-	public const string SENDER_NOT_FOUND_ERROR      = "Sender profile not found";
 	public const string ROOM_MEMBER_NOT_FOUND_ERROR = "Room member profile not found";
-	public const string DUPLICATE_DM_ROOM_ERROR     = "Direct message room already exists";
-	public const string CHANNEL_NOT_FOUND_ERROR     = "AbstractChannel not found";
-	public const string PROFILE_NOT_FOUND_ERROR     = "Profile not found";
 
-	public const string INVALID_SENDER_ERROR = "first message sender must be a member of the room or a sysadmin account";
-
-	public const     string                           NULL_SENDER_ERROR = "null first message sender with valid message";
 	private readonly IDbContextFactory<ChatDbContext> _dbFactory;
 	private readonly ILogger<ChannelService>          _logger;
 	private          Faker                            _faker = new("en");
