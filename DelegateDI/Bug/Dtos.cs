@@ -42,11 +42,6 @@ internal sealed record EncryptedPrivateKey(string? Version,
 										   string? EphemPublicKey,
 										   string? Ciphertext);
 
-public sealed record EncryptedPrivateKeyDto(string? Version,
-											string? Nonce,
-											string? EphemPublicKey,
-											string? Ciphertext);
-
 internal sealed record NewRoomRequest(IEnumerable<(Guid, Permission)> MembersAndPermissions,
 									  ChannelType                     Type,
 									  Guid                            ApplicationId,

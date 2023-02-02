@@ -20,3 +20,8 @@ internal interface IChannelService
 
 	void GuardAgainstDuplicateMembers(NewRoomRequest request);
 }
+
+internal interface IProfileService
+{
+	Task<Guid> UpsertProfile(string walletAddress, Guid appId);
+}

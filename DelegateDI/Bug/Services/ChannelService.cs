@@ -8,8 +8,8 @@ namespace DelegateDI.Bug.Services;
 
 internal sealed class ChannelService: IChannelService
 {
-	public const string DUPLICATE_MEMBER_ERROR      = "room cannot have duplicate members";
-	public const string ROOM_MEMBER_NOT_FOUND_ERROR = "Room member profile not found";
+	private const string DUPLICATE_MEMBER_ERROR      = "room cannot have duplicate members";
+	private const string ROOM_MEMBER_NOT_FOUND_ERROR = "Room member profile not found";
 
 	private readonly IDbContextFactory<ChatDbContext> _dbFactory;
 	private readonly ILogger<ChannelService>          _logger;

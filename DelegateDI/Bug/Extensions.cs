@@ -23,9 +23,13 @@ internal static class Extensions
 														   })
 				.AddEntityFrameworkStores<BylinesIdentityDbContext>();
 		services.AddDbContext<BylinesIdentityDbContext>(x => x.UseSqlite("Data Source=identity.db;"), ServiceLifetime.Transient);
-		services.AddScoped<IChannelService, ChannelService>();
-		services.AddScoped<IChatApiContract, ChatService>();
 		services.AddDbContextFactory<ChatDbContext>(options => options.UseSqlite("Data Source=chat.db;"));
+
+		services.AddSingleton<IClock>(SystemClock.Instance);
+		services.AddScoped<IChannelService, ChannelService>();
+		services.AddScoped<IProfileService, ProfileService>();
+		services.AddScoped<IChatApiContract, ChatService>();
+
 		services.AddTransient<GetEncryptionPublicKeyByWalletAddress>(sp =>
 																	 {
 																		 var dbContext = sp.GetRequiredService<BylinesIdentityDbContext>();
@@ -41,7 +45,6 @@ internal static class Extensions
 		services.AddTransient<GetEnsDomain>(sp =>
 										    {
 											    var userManager = sp.GetRequiredService<UserManager<BylinesAccount>>();
-
 											    return async (walletAddress) =>
 												       {
 													       var account = await userManager.FindByNameAsync(walletAddress);
@@ -50,7 +53,6 @@ internal static class Extensions
 													       return account.EnsDomain;
 												       };
 										    });
-		services.AddSingleton<IClock>(SystemClock.Instance);
 
 		return services;
 	}

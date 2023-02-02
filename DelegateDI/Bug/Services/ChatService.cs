@@ -9,56 +9,40 @@ namespace DelegateDI.Bug.Services;
 internal sealed class ChatService: IChatApiContract
 {
 	private const string SENDER_NOT_FOUND_ERROR      = "Sender profile not found";
-	public const  string ROOM_MEMBER_NOT_FOUND_ERROR = "Room member profile not found";
+	private const string ROOM_MEMBER_NOT_FOUND_ERROR = "Room member profile not found";
 	private const string DUPLICATE_DM_ROOM_ERROR     = "Direct message room already exists";
 
-	public const string INVALID_SENDER_ERROR = "first message sender must be a member of the room or a sysadmin account";
+	private const string INVALID_SENDER_ERROR = "first message sender must be a member of the room or a sysadmin account";
 
-	public const     string                                NULL_SENDER_ERROR       = "null first message sender with valid message";
-	public const     string                                CHANNEL_NOT_FOUND_ERROR = "AbstractChannel not found";
-	public const     string                                PROFILE_NOT_FOUND_ERROR = "Profile not found";
-	public const     string                                ROOM_NOT_FOUND_ERROR    = "Room not found";
+	private const    string                                NULL_SENDER_ERROR       = "null first message sender with valid message";
+	private const    string                                PROFILE_NOT_FOUND_ERROR = "Profile not found";
 	private readonly IChannelService                       _channelService;
 	private readonly IDbContextFactory<ChatDbContext>      _dbFactory;
 	private readonly GetEnsDomain                          _getEnsDomain;
 	private readonly ILogger<ChatService>                  _logger;
 	private readonly IClock                                _nodaClock;
+	private readonly IProfileService                       _profileService;
 	private readonly GetEncryptionPublicKeyByWalletAddress _publicKeyProvider;
 
 	public ChatService(IDbContextFactory<ChatDbContext>      dbFactory,
-					   ILogger<ChatService>                  logger,
-					   GetEnsDomain                          getEnsDomain,
 					   IChannelService                       channelService,
+					   IProfileService                       profileService,
+					   GetEnsDomain                          getEnsDomain,
+					   GetEncryptionPublicKeyByWalletAddress publicKeyProvider,
 					   IClock                                nodaClock,
-					   GetEncryptionPublicKeyByWalletAddress publicKeyProvider)
+					   ILogger<ChatService>                  logger)
 
 	{
 		this._getEnsDomain      = getEnsDomain;
 		this._channelService    = channelService;
+		this._profileService    = profileService;
 		this._nodaClock         = nodaClock;
 		this._publicKeyProvider = publicKeyProvider;
 		this._dbFactory         = dbFactory;
 		this._logger            = logger;
 	}
 
-	public async Task<Guid> UpsertProfile(string walletAddress, Guid appId)
-	{
-		await using var db = await this._dbFactory.CreateDbContextAsync();
-
-		var profile = await db.Profiles.Where(p => p.WalletAddress.ToLower() == walletAddress.ToLower() && p.ApplicationId == appId).FirstOrDefaultAsync();
-		if (profile is not null)
-		{
-			profile.SetIsBylUserToTrue();
-			await db.SaveChangesAsync();
-			return profile.Id;
-		}
-
-		Console.WriteLine($"Creating new profile for {walletAddress} at {appId}, CreateOrUpdateRegisteredProfile.");
-		var newProfile = UserProfile.Create(walletAddress, appId);
-		db.Profiles.Add(newProfile);
-		await db.SaveChangesAsync();
-		return newProfile.Id;
-	}
+	public async Task<Guid> UpsertProfile(string walletAddress, Guid appId) => await this._profileService.UpsertProfile(walletAddress, appId);
 
 	public async Task<Guid> CreateRoom(NewRoomRequest request)
 	{
