@@ -1,69 +1,73 @@
 using DelegateDI;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<MySingletonService>();
 builder.Services.AddScoped<MyScopedService>();
 builder.Services.AddTransient<MyTransientService>();
 builder.Services.AddSingleton<MySingletonDelegate>(serviceProvider =>
 												   {
-													   Console.WriteLine("Construct singleton delegate");
-													   return () => Console.WriteLine("Invoke singleton delegate");
+													   Console.WriteLine($"Construct {nameof(MySingletonDelegate)}");
+													   return () => Console.WriteLine($"Invoke {nameof(MySingletonDelegate)}");
 												   });
 builder.Services.AddScoped<MyScopedDelegate>(serviceProvider =>
 											 {
-												 Console.WriteLine("Construct scoped delegate");
-												 return () => Console.WriteLine("Invoke scoped delegate");
+												 Console.WriteLine($"Construct {nameof(MyScopedDelegate)}");
+												 return () => Console.WriteLine($"Invoke {nameof(MyScopedDelegate)}");
 											 });
 builder.Services.AddTransient<MyTransientDelegate>(serviceProvider =>
 												   {
-													   Console.WriteLine("Construct transient delegate");
-													   return () => Console.WriteLine("Invoke transient delegate");
+													   Console.WriteLine($"Construct {nameof(MyTransientDelegate)}");
+													   return () => Console.WriteLine($"Invoke {nameof(MyTransientDelegate)}");
 												   });
 var app = builder.Build();
 
 app.MapGet("/singleton-service",
 		   (MySingletonService service) =>
 		   {
-			   Console.WriteLine("Singleton service endpoint");
+			   Console.WriteLine($"{nameof(MySingletonService)} endpoint");
 			   service.Log();
-			   return "Singleton Service";
+			   return nameof(MySingletonService);
 		   });
 app.MapGet("/singleton-delegate",
-		   (MySingletonDelegate handler) =>
+		   (MySingletonDelegate handle) =>
 		   {
-			   Console.WriteLine("Singleton delegate endpoint");
-			   handler();
-			   return "Singleton Delegate";
+			   Console.WriteLine($"{nameof(MySingletonDelegate)} endpoint");
+			   handle();
+			   return nameof(MySingletonDelegate);
 		   });
 app.MapGet("/scoped-service",
 		   (MyScopedService service) =>
 		   {
-			   Console.WriteLine("Scoped service endpoint");
+			   Console.WriteLine($"{nameof(MyScopedService)} endpoint");
 			   service.Log();
-			   return "Scoped Service";
+			   return nameof(MyScopedService);
 		   });
 app.MapGet("/scoped-delegate",
-		   (MyScopedDelegate handler) =>
+		   (MyScopedDelegate handle) =>
 		   {
-			   Console.WriteLine("Scoped delegate endpoint");
-			   handler();
-			   return "Scoped Delegate";
+			   Console.WriteLine($"{nameof(MyScopedDelegate)} endpoint");
+			   handle();
+			   return nameof(MyScopedDelegate);
 		   });
 app.MapGet("/transient-service",
 		   (MyTransientService service) =>
 		   {
-			   Console.WriteLine("Transient service endpoint");
+			   Console.WriteLine($"{nameof(MyTransientService)} endpoint");
 			   service.Log();
-			   return "Transient Service";
+			   return nameof(MyTransientService);
 		   });
 app.MapGet("/transient-delegate",
-		   (MyTransientDelegate handler) =>
+		   (MyTransientDelegate handle) =>
 		   {
-			   Console.WriteLine("Transient delegate endpoint");
-			   handler();
-			   return "Transient Delegate";
+			   Console.WriteLine($"{nameof(MyTransientDelegate)} endpoint");
+			   handle();
+			   return nameof(MyTransientDelegate);
 		   });
 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.Run();
 
 interface IService
