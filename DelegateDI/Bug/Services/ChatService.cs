@@ -200,7 +200,7 @@ internal sealed class ChatService: IChatApiContract
 			members.Add(profileDto);
 		}
 
-		if (members.Count == 0) throw new ArgumentException("No Profiles found");
+		if (members.Count() == 0) throw new ArgumentException("No Profiles found");
 
 		return members;
 	}

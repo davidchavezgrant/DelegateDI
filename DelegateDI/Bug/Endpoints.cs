@@ -33,7 +33,7 @@ internal static class Endpoints
 						 });
 
 		endpoints.MapGet(Endpoints.GET_PROFILES_BY_ID,
-						 async (IEnumerable<Guid> ids, IChatApiContract api) =>
+						 async (Guid[] ids, IChatApiContract api) =>
 						 {
 							 var result = await api.GetProfilesById(ids);
 							 return Results.Ok(result);

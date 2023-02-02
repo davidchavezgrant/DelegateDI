@@ -19,12 +19,12 @@ namespace DelegateDI.Migrations
                 schema: "chat",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    ImageUri = table.Column<string>(type: "TEXT", nullable: true),
-                    ApplicationId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Discriminator = table.Column<string>(type: "TEXT", nullable: false),
-                    IsPublic = table.Column<bool>(type: "INTEGER", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    ImageUri = table.Column<string>(type: "text", nullable: true),
+                    ApplicationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    IsPublic = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,8 +36,8 @@ namespace DelegateDI.Migrations
                 schema: "chat",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Permission = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Permission = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,13 +49,13 @@ namespace DelegateDI.Migrations
                 schema: "chat",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    IsBylinesUser = table.Column<bool>(type: "INTEGER", nullable: false),
-                    WalletAddress = table.Column<string>(type: "TEXT", nullable: false),
-                    EmailAddress = table.Column<string>(type: "TEXT", nullable: true),
-                    Permissions = table.Column<int>(type: "INTEGER", nullable: false),
-                    ApplicationId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    DisplayName = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsBylinesUser = table.Column<bool>(type: "boolean", nullable: false),
+                    WalletAddress = table.Column<string>(type: "text", nullable: false),
+                    EmailAddress = table.Column<string>(type: "text", nullable: true),
+                    Permissions = table.Column<int>(type: "integer", nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DisplayName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,12 +67,12 @@ namespace DelegateDI.Migrations
                 schema: "chat",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    TimeSentNodaTicks = table.Column<long>(type: "INTEGER", nullable: false),
-                    Content = table.Column<string>(type: "TEXT", nullable: false),
-                    SenderId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ChannelId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Flagged = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TimeSentNodaTicks = table.Column<long>(type: "bigint", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    SenderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ChannelId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Flagged = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,11 +91,11 @@ namespace DelegateDI.Migrations
                 schema: "chat",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ContactProfileId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Nickname = table.Column<string>(type: "TEXT", nullable: false),
-                    WalletAddress = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ContactProfileId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Nickname = table.Column<string>(type: "text", nullable: false),
+                    WalletAddress = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,12 +114,12 @@ namespace DelegateDI.Migrations
                 schema: "chat",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UserProfileId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    NumberUnreadMessages = table.Column<int>(type: "INTEGER", nullable: false),
-                    PermissionsId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    NotificationFrequency = table.Column<int>(type: "INTEGER", nullable: false),
-                    AbstractChannelId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserProfileId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NumberUnreadMessages = table.Column<int>(type: "integer", nullable: false),
+                    PermissionsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NotificationFrequency = table.Column<int>(type: "integer", nullable: false),
+                    AbstractChannelId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
