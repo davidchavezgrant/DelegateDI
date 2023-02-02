@@ -9,7 +9,10 @@ namespace DelegateDI.Bug;
 /// </summary>
 public interface IChatApiContract
 {
-	Task<Guid>                          CreateRoom(NewRoomRequest    request);
-	Task<IEnumerable<ChannelDto>>       ListChannelsByProfileId(Guid profileId);
-	Task<IEnumerable<DirectMessageDto>> ListRoomsByProfileId(Guid    profileId);
+	Task<Guid> UpsertProfile(string walletAddress, Guid appId);
+	Task<Guid>                          CreateRoom(NewRoomRequest         request);
+	Task<IEnumerable<ChannelDto>>       ListChannelsByProfileId(Guid      profileId);
+	Task<IEnumerable<DirectMessageDto>> ListRoomsByProfileId(Guid         profileId);
+	Task<IEnumerable<ProfileDto>>       GetProfilesById(IEnumerable<Guid> ids);
+	Task<ProfileDto>                    GetProfileById(Guid               profileId);
 }

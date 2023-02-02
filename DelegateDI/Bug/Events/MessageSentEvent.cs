@@ -1,3 +1,4 @@
+using DelegateDI.Bug.Dtos;
 using DelegateDI.Bug.Entities;
 
 

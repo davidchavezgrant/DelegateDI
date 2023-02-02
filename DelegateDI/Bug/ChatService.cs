@@ -41,6 +41,25 @@ internal sealed class ChatService: IChatApiContract
 		this._logger            = logger;
 	}
 
+	public async Task<Guid> UpsertProfile(string walletAddress, Guid appId)
+	{
+		await using var db = await this._dbFactory.CreateDbContextAsync();
+
+		var profile = await db.Profiles.Where(p => p.WalletAddress.ToLower() == walletAddress.ToLower() && p.ApplicationId == appId).FirstOrDefaultAsync();
+		if (profile is not null)
+		{
+			profile.SetIsBylUserToTrue();
+			await db.SaveChangesAsync();
+			return profile.Id;
+		}
+
+		Console.WriteLine($"Creating new profile for {walletAddress} at {appId}, CreateOrUpdateRegisteredProfile.");
+		var newProfile = UserProfile.Create(walletAddress, appId);
+		db.Profiles.Add(newProfile);
+		await db.SaveChangesAsync();
+		return newProfile.Id;
+	}
+
 	public async Task<Guid> CreateRoom(NewRoomRequest request)
 	{
 		if (request.Type == ChannelType.COMMUNITY) return await this._channelService.CreateChannel(request, null);
@@ -81,7 +100,7 @@ internal sealed class ChatService: IChatApiContract
 			db.ChatRooms.Add(chatRoom);
 
 			//send first message
-			if (request.FirstMessageSender is not null && !string.IsNullOrWhiteSpace(request.FirstMessage))
+			if (request.FirstMessageSender != Guid.Empty && !string.IsNullOrWhiteSpace(request.FirstMessage))
 			{
 				var sender        = (Guid)request.FirstMessageSender;
 				var senderProfile = await db.Profiles.Where(c => c.Id == sender).FirstOrDefaultAsync();
@@ -109,7 +128,7 @@ internal sealed class ChatService: IChatApiContract
 									    this._getEnsDomain,
 									    this._publicKeyProvider);
 			}
-			else if (request.FirstMessageSender is null && !string.IsNullOrWhiteSpace(request.FirstMessage))
+			else if (request.FirstMessageSender == Guid.Empty && !string.IsNullOrWhiteSpace(request.FirstMessage))
 			{
 				this._logger.LogError(NULL_SENDER_ERROR);
 				throw new ArgumentException(NULL_SENDER_ERROR);
@@ -122,7 +141,7 @@ internal sealed class ChatService: IChatApiContract
 									    this._publicKeyProvider);
 			}
 
-			this._logger.LogInformation($"Created Room between {request.MembersAndPermissions.First().Item1} and {request.MembersAndPermissions.Last().Item1}");
+			this._logger.LogInformation("Created Room between {First} and {Last}", request.MembersAndPermissions.First().Item1, request.MembersAndPermissions.Last().Item1);
 			await db.SaveChangesAsync();
 			return chatRoom.Id;
 		}
@@ -156,7 +175,7 @@ internal sealed class ChatService: IChatApiContract
 		if (profile is null)
 		{
 			this._logger.LogError(PROFILE_NOT_FOUND_ERROR);
-			this._logger.LogError("{profileId}", profile);
+			this._logger.LogError("{@ProfileId}", profile);
 			throw new ArgumentException(PROFILE_NOT_FOUND_ERROR);
 		}
 
@@ -169,8 +188,8 @@ internal sealed class ChatService: IChatApiContract
 
 		foreach (var room in rooms)
 		{
-			var userChannelConfig    = room.Members.Where(m => m.UserProfile.Id == profileId).FirstOrDefault();
-			int numberUnreadMessages = userChannelConfig.NumberUnreadMessages;
+			var userChannelConfig    = room.Members.FirstOrDefault(m => m.UserProfile.Id == profileId);
+			int numberUnreadMessages = userChannelConfig?.NumberUnreadMessages ?? 0;
 			results.Add(await ChatRoom.MakeDto((ChatRoom)room,
 										       numberUnreadMessages,
 										       this._getEnsDomain,
@@ -180,6 +199,28 @@ internal sealed class ChatService: IChatApiContract
 		return results;
 	}
 
+	public async Task<ProfileDto> GetProfileById(Guid profileId)
+	{
+		await using var db         = await this._dbFactory.CreateDbContextAsync();
+		var             profileDto = await this.GetProfile(db, profileId);
+		return profileDto;
+	}
+
+	public async Task<IEnumerable<ProfileDto>> GetProfilesById(IEnumerable<Guid> ids)
+	{
+		await using var db      = await this._dbFactory.CreateDbContextAsync();
+		var             members = new List<ProfileDto>();
+		foreach (var id in ids)
+		{
+			var profileDto = await this.GetProfile(db, id);
+			members.Add(profileDto);
+		}
+
+		if (members.Count == 0) throw new ArgumentException("No Profiles found");
+
+		return members;
+	}
+
 	private async Task<ProfileDto> GetProfile(ChatDbContext dbContext, Guid profileId)
 	{
 		var profile = await dbContext.Profiles.FindAsync(profileId);
@@ -187,14 +228,14 @@ internal sealed class ChatService: IChatApiContract
 		{
 			this._logger.LogError(PROFILE_NOT_FOUND_ERROR);
 			this._logger.LogError("{profileId}", profile);
-			throw new ArgumentException(PROFILE_NOT_FOUND_ERROR);
+			return null;
 		}
 
 		string? ensDomain = await this._getEnsDomain(profile.WalletAddress);
 		return profile.ToDto(ensDomain, "");
 	}
 
-	public async Task<List<UserChannelConfiguration>> GetRoomMembers(NewRoomRequest request, ChatDbContext db)
+	private async Task<List<UserChannelConfiguration>> GetRoomMembers(NewRoomRequest request, ChatDbContext db)
 	{
 		List<UserChannelConfiguration> newRoomMembers = new();
 

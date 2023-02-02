@@ -1,23 +1,22 @@
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.Dtos;
 
-public sealed record ProfileDto(Guid    ProfileId,
-								string  WalletAddress,
-								string? DisplayName,
-								string? EnsDomain,
-								string? EncryptionPublicKey,
-								string? Email = null,
-								Uri?    AvatarUri = null,
+public sealed record ProfileDto(Guid            ProfileId,
+								string          WalletAddress,
+								string          DisplayName,
+								string          EnsDomain,
+								string          EncryptionPublicKey,
+								string          Email,
+								Uri?            AvatarUri = null,
 								UserPermissions Permissions = UserPermissions.NONE)
 {
 	public static ProfileDto Empty => new(Guid.Empty,
 										  string.Empty,
 										  string.Empty,
 										  string.Empty,
-										  null,
-										  null,
+										  "",
+										  "",
 										  null,
 										  UserPermissions.NONE);
-	
 }
 
 public static class DtoExtensions
@@ -28,13 +27,10 @@ public static class DtoExtensions
 			return dto.DisplayName;
 		if (!string.IsNullOrWhiteSpace(dto.EnsDomain))
 			return dto.EnsDomain;
+
 		return dto.WalletAddress;
 	}
 }
 
 [Flags]
-public enum UserPermissions
-{
-	NONE = 0,
-	NOTIFIER = 1
-}
+public enum UserPermissions { NONE = 0, NOTIFIER = 1 }

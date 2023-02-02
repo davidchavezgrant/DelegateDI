@@ -1,3 +1,6 @@
+using DelegateDI.Bug.Dtos;
+
+
 namespace DelegateDI.Bug.Entities;
 
 internal sealed class UserProfile: Entity

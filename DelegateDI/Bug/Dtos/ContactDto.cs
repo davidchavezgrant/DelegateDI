@@ -1,4 +1,4 @@
-namespace Bylines.Chat.Contracts.Dtos;
+namespace DelegateDI.Bug.Dtos;
 
 public sealed record ContactDto(Guid   OwnerProfileId,
 								Guid   ContactProfileId,

@@ -1,10 +1,7 @@
 
 
 
-using DelegateDI.Bug.Dtos;
-
-
-namespace DelegateDI.Bug;
+namespace DelegateDI.Bug.Dtos;
 
 public sealed record NewRoomDto(DirectMessageDto DirectMessage, ChatMessageDto? FirstMessage);
 
